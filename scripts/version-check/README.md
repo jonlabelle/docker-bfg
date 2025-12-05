@@ -1,6 +1,6 @@
 # BFG Version Checker
 
-[![cd](https://github.com/jonlabelle/docker-bfg/actions/workflows/check-bfg-version/badge.svg)](https://github.com/jonlabelle/docker-bfg/actions/workflows/check-bfg-version)
+[![Check BFG version](https://github.com/jonlabelle/docker-bfg/actions/workflows/check-bfg-version.yml/badge.svg)](https://github.com/jonlabelle/docker-bfg/actions/workflows/check-bfg-version.yml)
 
 > This directory contains a script to check for new versions of BFG Repo-Cleaner and automatically update the project.
 
