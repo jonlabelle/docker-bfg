@@ -19,13 +19,15 @@ all: ## Lints the Dockerfile and runs the container in a terminal session
 
 .PHONY: lint
 lint: ## Lints the Dockerfile
-	@$(DOCKER) run --rm --interactive --env "HADOLINT_IGNORE=DL3013,DL3018,DL3008" docker.io/hadolint/hadolint:latest < Dockerfile
+	@$(DOCKER) run --rm --interactive docker.io/hadolint/hadolint:latest < Dockerfile
 
+.PHONY: build
 build: ## Builds a local dev image (bfg:dev)
 	@$(DOCKER) build --tag "$(IMAGE_NAME)" .
 
+.PHONY: build-arm
 build-arm: ## Builds the linux/arm64 image (bfg-arm:dev)
-	@$(DOCKER) buildx create --use
+	@$(DOCKER) buildx create --use --name bfg-builder 2>/dev/null || $(DOCKER) buildx use bfg-builder
 	@$(DOCKER) buildx build --platform linux/arm64 --output type=docker --tag "$(ARM_IMAGE_NAME)" .
 
 .PHONY: run

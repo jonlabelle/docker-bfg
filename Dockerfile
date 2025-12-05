@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 
 LABEL org.opencontainers.image.authors="Jon LaBelle <https://jonlabelle.com>" \
   org.opencontainers.title="bfg" \
@@ -8,20 +8,9 @@ LABEL org.opencontainers.image.authors="Jon LaBelle <https://jonlabelle.com>" \
 
 ARG BFG_VERSION=1.15.0
 
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends git && \
-  rm -rf /var/lib/apt/lists/*
-
-WORKDIR /work
-
-RUN curl -fsSL -o /usr/local/bin/bfg.jar \
-  "https://repo1.maven.org/maven2/com/madgag/bfg/${BFG_VERSION}/bfg-${BFG_VERSION}.jar"
-
-ARG BFG_VERSION=1.15.0
-
 # hadolint ignore=DL3008
 RUN apt-get update && \
-  apt-get install -y --no-install-recommends git && \
+  apt-get install -y --no-install-recommends curl git && \
   rm -rf /var/lib/apt/lists/*
 
 WORKDIR /work
@@ -31,5 +20,11 @@ RUN curl -fsSL -o /usr/local/bin/bfg.jar \
 
 COPY entrypoint.sh /usr/local/bin/bfg
 RUN chmod +x /usr/local/bin/bfg
+
+# Create non-root user
+RUN useradd -m -u 1000 -s /bin/bash bfg && \
+  chown -R bfg:bfg /work
+
+USER bfg
 
 ENTRYPOINT ["/usr/local/bin/bfg"]
