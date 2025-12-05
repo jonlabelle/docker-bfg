@@ -92,16 +92,16 @@ get_latest_version() {
     response=$(curl -sS "https://api.github.com/repos/$GITHUB_REPO/releases/latest")
   fi
 
-  if ! echo "$response" | jq -e '.tag_name' >/dev/null 2>&1; then
+  if ! echo "${response}" | jq -e '.tag_name' >/dev/null 2>&1; then
     log_error "Failed to fetch latest release from GitHub API"
-    if echo "$response" | jq -e '.message' >/dev/null 2>&1; then
-      log_error "API message: $(echo "$response" | jq -r '.message')"
+    if echo "${response}" | jq -e '.message' >/dev/null 2>&1; then
+      log_error "API message: $(echo "${response}" | jq -r '.message')"
     fi
     return 1
   fi
 
   # Remove 'v' prefix from tag name
-  echo "$response" | jq -r '.tag_name' | sed 's/^v//'
+  echo "${response}" | jq -r '.tag_name' | sed 's/^v//'
 }
 
 # Get release notes from GitHub
@@ -115,10 +115,10 @@ get_release_notes() {
     response=$(curl -sS "https://api.github.com/repos/${GITHUB_REPO}/releases/tags/v${version}")
   fi
 
-  if ! echo "$response" | jq -e '.body' >/dev/null 2>&1; then
+  if ! echo "${response}" | jq -e '.body' >/dev/null 2>&1; then
     log_error "Failed to fetch release notes for version v${version} from GitHub API"
-    if echo "$response" | jq -e '.message' >/dev/null 2>&1; then
-      log_error "API message: $(echo "$response" | jq -r '.message')"
+    if echo "${response}" | jq -e '.message' >/dev/null 2>&1; then
+      log_error "API message: $(echo "${response}" | jq -r '.message')"
     fi
     return 1
   fi
@@ -278,6 +278,11 @@ main() {
   2)
     # Latest version is newer - proceed with update
     log_warning "New version available: ${LATEST_VERSION} (current: ${CURRENT_VERSION})"
+    ;;
+  *)
+    # Unexpected comparison result
+    log_error "Unexpected version comparison result: ${comparison}"
+    exit 1
     ;;
   esac
 
