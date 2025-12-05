@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:25-jre-jammy
 
 LABEL org.opencontainers.image.authors="Jon LaBelle <https://jonlabelle.com>" \
   org.opencontainers.title="bfg" \
