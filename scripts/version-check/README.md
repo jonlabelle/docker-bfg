@@ -49,12 +49,13 @@ Automatically create a branch and commit the changes:
 
 ## Options
 
-| Option            | Description                                                            |
-| ----------------- | ---------------------------------------------------------------------- |
-| `--create-branch` | Create a new branch with format `chore(deps): update bfg to <version>` |
-| `--commit`        | Commit the changes to the current/new branch                           |
-| `--dry-run`       | Show what would be done without making any changes                     |
-| `--help`          | Display help message                                                   |
+| Option                 | Description                                                               |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `--create-branch`      | Create a new branch with format `chore(deps): update bfg to <version>`    |
+| `--branch-name <name>` | Specify a custom branch name (default: `chore-deps-update-bfg-<version>`) |
+| `--commit`             | Commit the changes to the current/new branch                              |
+| `--dry-run`            | Show what would be done without making any changes                        |
+| `--help`               | Display help message                                                      |
 
 ## Requirements
 
@@ -64,6 +65,17 @@ The script requires the following commands to be available:
 - `jq` - For parsing JSON responses
 - `git` - For version control operations
 - `sed` - For updating files
+
+<details>
+<summary><strong>Platform-specific Requirements</strong></summary>
+
+All required commands are available by default on:
+
+- **macOS** (via Xcode Command Line Tools or Homebrew)
+- **Linux** (Ubuntu, Debian, RedHat, Alpine, etc.)
+- **GitHub Actions** (ubuntu-latest runner)
+
+</details>
 
 ## Automated Workflow
 
@@ -94,6 +106,20 @@ When running in a GitHub Actions environment (detected by `$GITHUB_OUTPUT`), the
 - `latest_version` - The new version available
 - `updated` - Boolean indicating if an update was performed
 - `release_notes` - The release notes from GitHub
+
+<details>
+<summary><strong>Example GitHub Actions Output</strong></summary>
+
+```json
+{
+  "current_version": "1.15.0",
+  "latest_version": "1.15.1",
+  "updated": "true",
+  "release_notes": "### Bug Fixes\n- Fixed issue with large binary files\n- Improved performance on Windows"
+}
+```
+
+</details>
 
 ## Example Output
 
@@ -139,11 +165,14 @@ export GITHUB_TOKEN="your_token_here"
 
 Sometimes a GitHub release is published before the artifacts are available on Maven Central. The script checks for Maven availability and will exit with an error if the version isn't ready yet. Simply try again later.
 
-### sed Compatibility
+<details>
+<summary><strong>Other Common Issues</strong></summary>
+
+#### sed Compatibility
 
 The script handles both macOS and Linux versions of `sed` automatically by detecting the operating system.
 
-### Current Version Newer Than Latest Release
+#### Current Version Newer Than Latest Release
 
 If you see a message like "Current version (X.Y.Z) is newer than latest release", this typically means:
 
@@ -152,3 +181,5 @@ If you see a message like "Current version (X.Y.Z) is newer than latest release"
 - There's a delay in the GitHub releases API
 
 This is intentional behavior to prevent accidental downgrades. The script will not modify files in this case.
+
+</details>
