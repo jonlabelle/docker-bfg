@@ -6,7 +6,7 @@
 
 > A Docker image for the [BFG Repo-Cleaner](https://rtyley.github.io/bfg-repo-cleaner/), a simpler, faster alternative to `git filter-branch` for removing large files, passwords, credentials, and other unwanted data from Git repository history.
 
-**Current BFG Version:** 1.15.0
+**Current BFG Version:** [1.15.0](https://github.com/rtyley/bfg-repo-cleaner/releases/tag/v1.15.0)
 
 ## Table of Contents
 
