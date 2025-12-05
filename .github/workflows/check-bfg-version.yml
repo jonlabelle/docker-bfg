@@ -1,0 +1,76 @@
+name: Check BFG version
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 9:00 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: check-bfg-version
+  cancel-in-progress: false
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Check for new BFG version
+        id: check
+        run: |
+          chmod +x ./scripts/version-check/check-bfg-version.sh
+          ./scripts/version-check/check-bfg-version.sh --create-branch --commit || echo "updated=false" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.check.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "chore/deps-update-bfg-${{ steps.check.outputs.latest_version }}"
+          delete-branch: true
+          title: "chore(deps): update BFG to ${{ steps.check.outputs.latest_version }}"
+          body: |
+            ## 🔄 BFG Repo-Cleaner Update
+
+            This automated PR updates BFG Repo-Cleaner from **${{ steps.check.outputs.current_version }}** to **${{ steps.check.outputs.latest_version }}**.
+
+            ### 📦 Changes
+
+            - Updated `Dockerfile` ARG `BFG_VERSION` to `${{ steps.check.outputs.latest_version }}`
+            - Updated `README.md` version reference
+
+            ### 📝 Release Notes
+
+            ${{ steps.check.outputs.release_notes }}
+
+            ---
+
+            ### ✅ Verification
+
+            - [x] New version verified on [Maven Central](https://repo1.maven.org/maven2/com/madgag/bfg/${{ steps.check.outputs.latest_version }}/)
+            - [x] Release notes from [GitHub Release](https://github.com/rtyley/bfg-repo-cleaner/releases/tag/v${{ steps.check.outputs.latest_version }})
+
+            ### 🚀 Next Steps
+
+            After merging this PR:
+            1. The Docker image will be automatically built and published
+            2. Users can pull the updated image with the new BFG version
+
+            ---
+
+            🤖 *This PR was automatically created by the [Check BFG Version workflow](.github/workflows/check-bfg-version.yml)*
+          labels: |
+            dependencies
+            automated
+          assignees: jonlabelle
+          commit-message: "chore(deps): update BFG to ${{ steps.check.outputs.latest_version }}"
+
+      - name: Log results
+        if: steps.check.outputs.updated != 'true'
+        run: |
+          echo "✅ Already on the latest version of BFG Repo-Cleaner"
