@@ -274,7 +274,7 @@ bfg() {
 
 ### PowerShell
 
-Add to your PowerShell `$PROFILE` (`Microsoft.PowerShell_profile.ps1`):
+Add to your [PowerShell profile](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_profiles) (`Microsoft.PowerShell_profile.ps1`):
 
 ```powershell
 function bfg {
