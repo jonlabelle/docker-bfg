@@ -25,6 +25,6 @@ RUN chmod +x /usr/local/bin/bfg
 RUN useradd -m -u 1000 -s /bin/bash bfg && \
   chown -R bfg:bfg /work
 
-USER bfg
+USER 1000:1000
 
 ENTRYPOINT ["/usr/local/bin/bfg"]
